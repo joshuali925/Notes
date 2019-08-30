@@ -66,6 +66,11 @@ model.fit(training_images, training_labels, epochs=5, callbacks=[callbacks])
 
 # Week 3 - Convolution Neural Network
 - convolution works like a filter for images to emphasis certain features
+- use `model.summary()` to inspect each layer
 ```python
-tf.keras.layers.Conv2D(<num_filters>, (filter_m, filter_n), activation='relu', input_shape=(m, n, <color_depth>))
+tf.keras.layers.Conv2D(<num_filters>, (3, 3), activation='relu', input_shape=(m, n, <color_depth>)),
+tf.keras.layers.MaxPooling2D(2, 2),
 ```
+- create `3` pixels by `3` pixels filters
+- for every `2` pixels by `2` pixels, pools (keeps) the one with the largest value (size of image /= 4)
+

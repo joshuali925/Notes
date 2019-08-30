@@ -1,4 +1,7 @@
 # JavaScript
+## Tips
+- create an array from 0 to n - 1: `Array.from({length: n}, (v, i) => i)`
+
 ## Promises
 - simpler callbacks to handle async operations
 ```javascript
@@ -27,7 +30,6 @@ fetch('http://example.com/movies.json')
     .then(response => response.json())
     .then(jsonData => console.log(JSON.stringify(jsonData)))
 ```
-
 
 ## Async/Await
 - `await` only works in `async` functions
