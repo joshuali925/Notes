@@ -7,5 +7,8 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    
+    width: 50vh;  /* if width specified, set margin also */
+    margin: auto;
 }
 ```
