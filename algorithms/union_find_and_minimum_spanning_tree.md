@@ -26,7 +26,7 @@ class UnionFind():
         return self.find(x) == self.find(y)
 ```
 
-## `union()` with ranks
+## `union()` With Ranks
 ```python
 class UnionFind():
     def __init__(self):
@@ -65,7 +65,7 @@ class UnionFind():
         return self.find(x) == self.find(y)
 ```
 
-## usage
+## Usage
 ```python
 uf = UnionFind()
 uf.union('hello', 'world')
@@ -91,5 +91,5 @@ def MST(edges):
     return results
 
 edges = [(0, 1, 10), (0, 2, 6), (0, 3, 5), (1, 3, 15), (2, 3, 4)]
-print(MST(edges))
+print(MST(edges))  # [(2, 3, 4), (0, 3, 5), (0, 1, 10)]
 ```
