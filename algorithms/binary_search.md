@@ -1,4 +1,4 @@
-# Integer Binary Search
+# Binary Search
 ```python
 def binary_search(A, target):
     low, high = 0, len(A)
@@ -10,17 +10,15 @@ def binary_search(A, target):
             high = mid
     return low
 ```
-- while in loop, searches `[low, high)` (i.e. `low <= mid < high`)
+- while in loop, searches within `[low, high)`
+    - `low <= mid < high` is always true
 - `low == high` when exits loop
-- returns inserting position, a integer in `[low, high]`
-    - first index where `A[index] >= target`
-    - or `len(A)` (`high`) if `A[-1] < target`
-- modify `if` to get first index where `if` is false
-    - find peak element
-    - TODO: peak
+- returns inserting position, `domain = [low, high]`
+    - returns first index where `A[index] >= target`
+    - or `len(A)` if `A[-1] < target`
 
 ## Search For First Occurrance
-- change return to `return low if A[low] == target else -1`
+- change return to `return low if low < len(A) and A[low] == target else -1`
 ```python
 A = [1, 2, 2, 4, 4, 4, 7, 10]
 binary_search(A, 3)  # -1
@@ -44,4 +42,13 @@ def closest_value_index(A, target):
     if abs(target - A[left]) < abs(A[right] - target):
         return left
     return right
+```
+
+## Find Peak Element
+```python
+    ...
+    low, high = 1, len(A) - 1
+    ...
+        if A[mid] < A[mid + 1]:
+    ...
 ```
