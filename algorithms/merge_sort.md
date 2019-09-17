@@ -16,7 +16,7 @@ def merge_sort(A, low=0, high=None):
 
     left = A[low:mid + 1]
     right = A[mid + 1:high + 1]
-    
+
     merge_sort(left)
     merge_sort(right)
 
@@ -41,4 +41,40 @@ def merge_sort(A, low=0, high=None):
         j += 1
         k += 1
 ```
-- checks `left[i] > right[i]` to maintain stability (if they are equal, put in value from left)
+- checks `left[i] > right[i]` first to maintain stability (if they are equal, put in value from left)
+- sorts `[low, high]` inclusive or the whole array
+
+## Sort Linked Lists
+```python
+def merge_sort(head):
+    if not head or not head.next:
+        return head
+
+    prev = slow = fast = head
+    # slow reaches the mid-point when fast finshes
+    while fast and fast.next:
+        prev = slow
+        slow = slow.next
+        fast = fast.next.next
+
+    # head -> ... -> prev -> None, slow -> ... -> None
+    prev.next = None
+
+    left = merge_sort(head)
+    right = merge_sort(slow)
+
+    dummy = ListNode(-1)
+    curr = dummy
+
+    while left and right:
+        if left.val < right.val:
+            curr.next = left
+            left = left.next
+        else:
+            curr.next = right
+            right = right.next
+        curr = curr.next
+    curr.next = left or right
+
+    return dummy.next
+```

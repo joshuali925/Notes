@@ -14,6 +14,7 @@ def binary_search(A, target):
     - `low <= mid < high` is always true
 - `low == high` when exits loop
 - returns inserting position, `domain = [low, high]`
+    - note that `low` can be out of bounds if target is the largest
     - returns first index where `A[index] >= target`
     - or `len(A)` if `A[-1] < target`
 
@@ -52,3 +53,26 @@ def closest_value_index(A, target):
         if A[mid] < A[mid + 1]:
     ...
 ```
+
+# Variation
+```python
+def binary_search2(A, target):
+    low, high = 0, len(A) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if A[mid] < target:
+            low = mid + 1
+        elif A[mid] > target:
+            high = mid - 1
+        else:
+            high = mid - 1
+    return low
+```
+- `low` would be the inserting position
+- `high = mid = low - 1` when exits loop
+    - `high` can be `-1`
+- modify `else` for specific requirements when searching
+    - if `A[mid] == target`, move `high` to the left and search towards the left
+    - put `low = mid + 1` in `else` when searching for rightmost target
+        - `high` would be the index in this case
+        - `low` can be out of bounds since its `high + 1`
