@@ -1,4 +1,3 @@
-# imports
 ```python
 import tensorflow as tf
 import numpy as np
@@ -9,10 +8,11 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import RMSprop
 ```
 
-# Week 1 - Intro
+# TensorFlow in Practice
+## Week 1 - Intro
 - https://github.com/lmoroney/dlaicourse/blob/master/Course%201%20-%20Part%202%20-%20Lesson%202%20-%20Notebook.ipynb
 - http://playground.tensorflow.org/
-## Linear regression
+### Linear regression
 - `keras.layers.Dense(n)` is a layer with `n` neurons
 ```python
 def house_model(y_new):
@@ -28,8 +28,8 @@ prediction = house_model([7.0])
 print(prediction)
 ```
 
-# Week 2 - Deep Neural Network
-## Fashion MNIST data
+## Week 2 - Deep Neural Network
+### Fashion MNIST data
 ```python
 mnist = tf.keras.datasets.fashion_mnist
 (training_images, training_labels), (test_images, test_labels) = mnist.load_data()
@@ -57,7 +57,7 @@ model.evaluate(test_images, test_labels)
 - **relu**: return `max(0, x)`
 - **softmax**: return 1 for the category with the largest probability, 0 for others
 
-## Callbacks
+### Callbacks
 - at each end of epochs, stop training if a threshold is reached (avoid overfitting)
 - `logs.get('loss')` is the loss, `logs.get('acc')` is the accuracy
 ```python
@@ -71,49 +71,53 @@ callbacks = myCallback()
 model.fit(training_images, training_labels, epochs=5, callbacks=[callbacks])
 ```
 
-# Week 3 - Convolution Neural Network
-- convolution works like a filter for images to emphasis certain features
-- use `model.summary()` to inspect each layer, requires to specify `input_shape()` on first layer
-```python
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Conv2D(64, (3, 3), activation='relu', input_shape=(300, 300, 3)),
-    tf.keras.layers.MaxPooling2D(2, 2),
-    ...
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(1, activation='sigmoid')
-])
-```
-- first layer takes inputs of `300` x `300`, each has `3` parameters (rgb in this case)
-- create `64` filters, each `3` pixels by `3` pixels 
-- for every `2` pixels by `2` pixels, pools (keeps) the one with the largest value (`size of image /= 4`)
-
-# Week 4 - Real data with ImageDataGenerator
-- for binary classification
+## Week 3-4 - Convolution Neural Network, Real data with ImageDataGenerator
+### Model definition
+- for **binary** classification
     - use `sigmoid` on a single output neuron instead of `softmax`
     - use `binary_crossentropy` instead of `sparse_categorical_crossentropy`
     - can use the `adam` optimizer, or `RMSprop`
 ```python
+model = tf.keras.models.Sequential(
+    tf.keras.layers.Conv2D(16, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),  # fourth convolutions
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+)
+model.summary()
 model.compile(
     loss='binary_crossentropy',
     optimizer=RMSprop(lr=0.001),  # learning rate
     metrics=['acc']
 )
 ```
+- convolution works like a filter for images to emphasis certain features (clear, distinct) regardless of the position
+- first layer takes inputs of `300` x `300`, each has `3` parameters (`rgb` in this case)
+- create `64` filters, each `3` pixels by `3` pixels 
+- for every `2` pixels by `2` pixels, pools (keeps) the one with the largest value (`size of image /= 4`)
+- use `model.summary()` to inspect each layer, requires `input_shape()` specified on first layer
+### ImageDataGenerator class
 - use generators to get data from source folders
     - auto labels input based on directory
     - use `fit_generator()` instead of `fit()`
 ```python
 train_datagen = ImageDataGenerator(rescale=1.0/255)
-validation_datagen = ImageDataGenerator(rescale=1.0/255)
-
 train_generator = train_datagen.flow_from_directory(
-    '/parent/',  # parent directory of the subdirectory of images
-                 # i.e. /parent/class_1, /parent/class_2
+    '/train_parent/',  # parent directory of the subdirectory of images
+                       # i.e. /train_parent/class_1/img_1, /train_parent/class_2/img_1
     target_size=(300, 300),  # image resolution, will resize when loaded
     batch_size=128,
     class_mode='binary',  # use binary for binary_crossentropy
 )
+
+validation_datagen = ImageDataGenerator(rescale=1.0/255)
 validation_generator = validation_datagen.flow_from_directory(
     '/validation_parent/',
     target_size=(300, 300),
@@ -129,4 +133,26 @@ history = model.fit_generator(
     validation_data=validation_generator,
     validation_steps=8
 )
+```
+
+
+
+# Convolutional Neural Networks in TensorFlow
+## Week 2 - Augmentation
+- augmentation creates additional data by rotating/transforming the current dataset, thus increases the size and diversity of dataset
+- avoids overfitting to improve performance
+- introduces randomness, but doesn't work well if the test datasets doesn't have the same randomness
+- use `ImageDataGenerator` to transform on the fly (won't save results)
+```python
+train_datagen = ImageDataGenerator(
+    rescale=1./255,  # scale down
+    rotation_range=40,  # rotate in a random direction up to 40 degrees, maximum 180
+    width_shift_range=0.2,
+    height_shift_range=0.2,  # move image up to 20% so that it's no longer centered
+    shear_range=0.2,  # shear image up to 20%
+    zoom_range=0.2,  # zoom image up to 20%
+    horizontal_flip=True,  # randomly flips image horizontally
+    fill_mode='nearest'  # fills pixels lost by operation
+)
+validation_datagen = ImageDataGenerator(rescale=1./255)
 ```

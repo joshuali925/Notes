@@ -74,6 +74,10 @@ uf.union('not', 'related')
 print(uf.is_connected('hello', '!'))  # True
 print(uf.is_connected('hello', 'not'))  # False
 ```
+- find the number of unique groups
+```python
+return len(set(uf.find(i) for i in uf.parents))  # counts the number of topmost parents
+```
 
 # Minimum Spanning Tree (Kruskal's algorithm)
 ```python

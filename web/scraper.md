@@ -16,6 +16,7 @@ with requests.session() as session:
     session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'})
     response = session.get(url, params=params)
     response = session.post(url, data=payload)
+    response.encoding = response.apparent_encoding
 ```
 - `params` in `get()` are `&key=value` parameters in forms of a dict
 - `data` in `post()` is the request body in a dict
@@ -51,7 +52,7 @@ soup = BeautifulSoup(response.text, 'lxml')
 | `soup.find_all('div', {'class': 'test'}, {'id': 'ted'})`         | finds `div` that contains `test` class and has `ted` id |
 | `soup.find_all('div', class_=lambda c: c and c.startswith('t'))` | class starts with `t`                                   |
 | `soup.find_all('div', id=re.compile(r'^te')`                     | id starts with `te`                                     |
-| `soup.find('div').text`                                          | `innerHTML` of first `div`                              |
+| `soup.find('div').get_text()`                                    | `innerHTML` of first `div`                              |
 | `soup.find('a')['href']`                                         | URL of `href` attribute of first `a`                    |
 
 # CSS Selectors
