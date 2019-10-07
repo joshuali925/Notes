@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras import layers
+from tensorflow.keras import Model
+
+from tensorflow.keras.applications.inception_v3 import InceptionV3
 ```
 
 # TensorFlow in Practice
@@ -50,13 +54,12 @@ model.compile(optimizer = tf.train.AdamOptimizer(),
 model.fit(training_images, training_labels, epochs=5)
 model.evaluate(test_images, test_labels)
 ```
-- always normalize input (make it between 0 and 1)
+- always normalize input (make it between `0` and `1`)
 - `keras.layers.Flatten()` flattens 2D inputs into 1D
 - hidden layer takes `m` x `n` inputs to `128` outputs
 - last layer takes `128` inputs to `10` outputs (categories) each with probabilities from `0` to `1`
 - **relu**: return `max(0, x)`
 - **softmax**: return 1 for the category with the largest probability, 0 for others
-
 ### Callbacks
 - at each end of epochs, stop training if a threshold is reached (avoid overfitting)
 - `logs.get('loss')` is the loss, `logs.get('acc')` is the accuracy
@@ -156,3 +159,46 @@ train_datagen = ImageDataGenerator(
 )
 validation_datagen = ImageDataGenerator(rescale=1./255)
 ```
+
+## Week 3 - Transfer Learning
+- load pre-trained models, use some layers and retrain some layers
+### The Inception model
+### Load the model
+```python
+!wget --no-check-certificate \
+    https://storage.googleapis.com/mledu-datasets/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5 \
+    -O /tmp/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5
+local_weights_file = '/tmp/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
+
+pre_trained_model = InceptionV3(input_shape=(150, 150, 3), include_top=False, weights=None)
+pre_trained_model.load_weights(local_weights_file)
+
+for layer in pre_trained_model.layers:
+    layer.trainable = False
+pre_trained_model.summary()
+```
+- use snapshot downloaded instead of built-in weights
+- no top layer, use convolutions
+- for each layer, lock states (freeze, not trainable)
+### Add other layers to the model
+```python
+last_output = pre_trained_model.get_layer('mixed7').output
+x = layers.Flatten()(last_output)
+x = layers.Dense(1024, activation='relu')(x)
+x = layers.Dropout(0.2)(x)
+x = layers.Dense(1, activation='sigmoid')(x)
+
+model = Model(pre_trained_model.input, x) 
+model.compile(optimizer = RMSprop(lr=0.0001), 
+              loss = 'binary_crossentropy', 
+              metrics = ['acc'])
+```
+- use `mixed7` as the last layer of the pre-trained model
+- add other layers, same idea as previously
+- `Dropout` layer randomly eliminates 20% of the neurons
+- `Dropout` reduces overfitting because neighbor neurons can have similar weights and skew the model
+
+## Week 4 - Multiclass Classifications
+- use `categorical` for `class_mode` in `ImageDataGenerator` instead of `binary`
+- change output layer of the model to `3` if there are `3` classes, change `activation` to `softmax`
+- use `categorical_crossentropy` when compiling the model instaed of `binary_crossentropy`
