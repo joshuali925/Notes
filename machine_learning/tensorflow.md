@@ -107,11 +107,15 @@ model.compile(
 - for every `2` pixels by `2` pixels, pools (keeps) the one with the largest value (`size of image /= 4`)
 - use `model.summary()` to inspect each layer, requires `input_shape()` specified on first layer
 ### ImageDataGenerator class
-- use generators to get data from source folders
-    - auto labels input based on directory
-    - use `fit_generator()` instead of `fit()`
+- use generators to get data from source for better customization
+- use `fit_generator()` instead of `fit()`
 ```python
 train_datagen = ImageDataGenerator(rescale=1.0/255)
+validation_datagen = ImageDataGenerator(rescale=1.0/255)
+```
+- load from directory
+    - auto labels input based on directory
+```python
 train_generator = train_datagen.flow_from_directory(
     '/train_parent/',  # parent directory of the subdirectory of images
                        # i.e. /train_parent/class_1/img_1, /train_parent/class_2/img_1
@@ -119,15 +123,28 @@ train_generator = train_datagen.flow_from_directory(
     batch_size=128,
     class_mode='binary',  # use binary for binary_crossentropy
 )
-
-validation_datagen = ImageDataGenerator(rescale=1.0/255)
 validation_generator = validation_datagen.flow_from_directory(
     '/validation_parent/',
     target_size=(300, 300),
     batch_size=32,
     class_mode='binary',
 )
-
+```
+- when loading from arrays instead of directory
+```python
+train_generator = train_datagen.flow(
+    training_images,  # shape = (number of samples, dim_x, dim_y, 1)
+    training_labels,
+    batch_size=32,
+)
+validation_generator = validation_datagen.flow(
+    testing_images,
+    testing_labels,
+    batch_size=32,
+)
+```
+- train the model by using `fit_generator`
+```python
 history = model.fit_generator(
     train_generator,
     steps_per_epoch=8,  # steps_per_epoch * batch_size = number of samples
@@ -137,7 +154,6 @@ history = model.fit_generator(
     validation_steps=8
 )
 ```
-
 
 
 # Convolutional Neural Networks in TensorFlow
@@ -201,4 +217,4 @@ model.compile(optimizer = RMSprop(lr=0.0001),
 ## Week 4 - Multiclass Classifications
 - use `categorical` for `class_mode` in `ImageDataGenerator` instead of `binary`
 - change output layer of the model to `3` if there are `3` classes, change `activation` to `softmax`
-- use `categorical_crossentropy` when compiling the model instaed of `binary_crossentropy`
+- use `categorical_crossentropy` or `sparse_categorical_crossentropy` when compiling the model instaed of `binary_crossentropy`
