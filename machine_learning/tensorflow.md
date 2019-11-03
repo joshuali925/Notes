@@ -10,6 +10,9 @@ from tensorflow.keras import layers
 from tensorflow.keras import Model
 
 from tensorflow.keras.applications.inception_v3 import InceptionV3
+
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 ```
 
 # TensorFlow in Practice
@@ -218,3 +221,21 @@ model.compile(optimizer = RMSprop(lr=0.0001),
 - use `categorical` for `class_mode` in `ImageDataGenerator` instead of `binary`
 - change output layer of the model to `3` if there are `3` classes, change `activation` to `softmax`
 - use `categorical_crossentropy` or `sparse_categorical_crossentropy` when compiling the model instaed of `binary_crossentropy`
+
+
+# Natural Language Processing in TensorFlow
+## Week 1 - Sentiment in Text
+- using tokens for each word
+```python
+sentences = [ 'I love my dog', 'I love my cat' ]
+tokenizer = Tokenizer(num_words=100, oov_token='<OOV>')  # top 100 words, sets unseen words in test data to '<OOV>' instead of omitting them
+tokenizer.fit_on_texts(sentences)
+word_index = tokenizer.word_index  # a dictionary, word: index
+sequences = tokenizer.texts_to_sequences(sentences)  # 2D list, each sentence is converted to a sequence, use '<OOV>' for words not in word_index
+padded = pad_sequences(sequences, padding='post', truncating='post', maxlen=5)  # pads 0 to beginning (default) of shorter sequences
+```
+- tokenizer strips punctuations, sets to lowercase
+- `pad_sequences` pads `0` to shorter sequences for training
+    - `padding='post'` so it pads `0` to the end of shorter sequences
+    - `maxlen` defines the max length of sequences, pads all sequences to `maxlen`
+    - `truncating` controls which direction to truncate sequences longer than `maxlen`
