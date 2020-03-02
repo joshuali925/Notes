@@ -1,17 +1,17 @@
 # Bit Operations
-| Operation                    | Code                     |
-|------------------------------|--------------------------|
-| set union                    | `A | B`                  |
-| set intersection             | `A & B`                  |
-| set subtraction              | `A & ~B`                 |
-| set negation                 | `~A`                     |
-| get all 1-bits               | `~0`                     |
-| set bit                      | `A |= 1 << bit`          |
-| clear bit                    | `A &= ~(1 << bit)`       |
-| test bit                     | `(A & 1 << bit) != 0`    |
-| least significant bit        | `A & -A`, `A & ~(A - 1)` |
-| remove least significant bit | `A & (A - 1)`            |
-| test power of 2              | `A & (A - 1) == 0`       |
+| Operation                    | Code                            |
+|------------------------------|---------------------------------|
+| set union                    | <code>A &#124; B</code>         |
+| set intersection             | `A & B`                         |
+| set subtraction              | `A & ~B`                        |
+| set negation                 | `~A`                            |
+| get all 1-bits               | `~0`                            |
+| set bit                      | <code>A &#124;= 1 << bit</code> |
+| clear bit                    | `A &= ~(1 << bit)`              |
+| test bit                     | `(A & 1 << bit) != 0`           |
+| least significant bit        | `A & -A`, `A & ~(A - 1)`        |
+| remove least significant bit | `A & (A - 1)`                   |
+| test power of 2              | `A & (A - 1) == 0`              |
 
 ## Count Bits
 ```python
