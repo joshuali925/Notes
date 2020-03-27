@@ -12,7 +12,7 @@ import re
 
 # Requests Basics
 ```python
-with requests.session() as session:
+with requests.Session() as session:
     session.headers.update({'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'})
     response = session.get(url, params=params)
     response = session.post(url, data=payload)
