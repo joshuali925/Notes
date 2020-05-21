@@ -124,8 +124,17 @@ for (let key in obj3)
 Object.keys(obj3).forEach(key => console.log(key, obj3[key]));
 ```
 
-# Front-end
+## Regex
+```javascript
+result = /pattern/flags.exec(query)
+
+result = /(abc).*(fgh)/.exec('xxxabcdefghi');
+// result == [ 'abcdefgh', 'abc', 'fgh', index: 3, input: 'abcdefghi' ]
+// [everything matched, group 1, ..., first index matched, original query]
+```
+
 ## Promises
+- https://javascript.info/async
 - simpler callbacks to handle async operations
 ```javascript
 let p = new Promise((resolve, reject) => {
