@@ -124,6 +124,20 @@ for (let key in obj3)
 Object.keys(obj3).forEach(key => console.log(key, obj3[key]));
 ```
 
+## Random
+- random integer in `[min, max]`
+```javascript
+const randint = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+```
+- random float in `[min, max]`
+```javascript
+const randfloat = (min, max) => Math.random() * (max - min) + min;
+```
+- random pastel color
+```javascript
+const randColor = () => `#${((Math.random() * 0xFFFFFF + 0xFFFFFF) >> 1).toString(16)}`;
+```
+
 ## Regex
 ```javascript
 result = /pattern/flags.exec(query)
