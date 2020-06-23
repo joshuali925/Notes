@@ -10,13 +10,14 @@ def binary_search(A, target):
             high = mid
     return low
 ```
+- loop invariant: `(-inf, low)` are all too small, `[high, inf)` are all too large, `[low, high)` unknown
 - while in loop, searches within `[low, high)`
     - `low <= mid < high` is always true
 - `low == high` when exits loop
 - returns inserting position, `domain = [low, high]`
     - returns first index where `A[index] >= target`
     - or `len(A)` if `A[-1] < target`
-    - `A[mid] >= target => high = mid`, searching within `[low, mid)` works because:
+    - if `A[mid] >= target`, we then search within `[low, mid)` works because:
         - if `mid` is the first occurrance, loop eventually exits with `low == mid` which is the inserting position
 
 ## Search For First Occurrance
