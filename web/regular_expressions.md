@@ -47,11 +47,3 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 | Flags    |  |
 |----------|--|
 | `/abc/g` |  |
-
-## JavaScript
-```javascript
-result = /(abc).*(fgh)/.exec('xxxabcdefghi');
-result = [ 'abcdefgh', 'abc', 'fgh', index: 3, input: 'abcdefghi' ]
-// [everything matched, group 1, ..., first index matched, original query]
-```
-
