@@ -10,10 +10,10 @@
 | clear bit                    | `A &= ~(1 << bit)`              |
 | test bit                     | `(A & 1 << bit) != 0`           |
 | least significant bit        | `A & -A`, `A & ~(A - 1)`        |
-| remove least significant bit | `A & (A - 1)`                   |
+| remove least significant bit | `A &= (A - 1)`                   |
 | test power of 2              | `A != 0 && A & (A - 1) == 0`    |
 
-## Count Bits
+## Count Bits (number of ones)
 ```python
 def count_bits(n):
     if n == 0: return 0
