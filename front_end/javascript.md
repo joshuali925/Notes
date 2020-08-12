@@ -133,6 +133,10 @@ const randint = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 ```javascript
 const randfloat = (min, max) => Math.random() * (max - min) + min;
 ```
+- random string
+```javascript
+const randString = () => Array.from({ length: 10 }, () => Math.random().toString(36).substring(2)).join('');
+```
 - random pastel color
 ```javascript
 const randColor = () => `#${((Math.random() * 0xFFFFFF + 0xFFFFFF) >> 1).toString(16)}`;
