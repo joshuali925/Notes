@@ -107,6 +107,26 @@ render() {
 }
 ```
 
+## Use `map` to render array of elements
+```javascript
+const arr = [1, 2, 3];
+return (
+  <>
+    {arr.length > 0 ? (
+      arr.map((x, i) => <div key={i}>{x}</div>)
+    ) : (null)}
+
+    {arr.length > 0 ? (
+      arr.map((x, i) => {
+        x = x + 1;
+        return (
+          <div key={i}>{x}</div>
+        )
+      })
+    ) : (null)}
+  </>
+```
+
 ## Resources for newer features
 - Official React Context API - https://reactjs.org/docs/context.html
 - Error Boundaries - https://reactjs.org/docs/error-boundaries.html

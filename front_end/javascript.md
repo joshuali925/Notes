@@ -41,6 +41,11 @@ arr.splice(2, 0, 2)  // [], arr = [ 0, 1, 2, 3, 4, 6, 7, 8, 9 ]
 let [first, last] = [arr.shift(), arr.pop()]  // first = 0, last = 9, arr = [ 1, 2, 3, 4, 6, 7, 8 ]
 ```
 
+- remove duplicate elements
+```javascript
+arr = arr.filter((val, idx, self) => self.indexOf(val) === i)
+```
+
 - last 3 elements
 ```javascript
 arr.slice(-3)  // [ 6, 7, 8 ], NOTE Array.slice and String.slice works similar to python's [i:j] slice
@@ -75,6 +80,39 @@ arr.length = 0  // arr = []
 ```javascript
 for (const n of newArr)
     console.log(n)
+```
+
+## Strings
+### substr, substring, slice
+- prefer slice
+#### string.substr(start [, length])
+```javascript
+let str = '0123456789'
+str.substr(3)  // '3456789'
+str.substr(3, 100)  // '3456789'
+str.substr(3, 4)  // '3456'
+str.substr(3, -1)  // ''
+str.substr(-3, 2)  // '78'
+```
+
+#### string.substring(start [, stop]): [start, stop)
+- swaps arguments if `start` > `stop`
+- uses `0` if either argument is negative or `NAN`
+```javascript
+str.substring(3)  // '3456789'
+str.substring(3, 100)  // '3456789'
+str.substring(7, 3) === str.substring(3, 7)  // true ('3456789')
+str.substring(3, -1) === str.substring(0, 3)  // true ('012')
+```
+
+#### string.slice(start [, stop]): [start, stop)
+- behaves like slice in python
+```javascript
+str.slice(3)  // '3456789'
+str.slice(-3)  // '789'
+str.slice(3, 100)  // '3456789'
+str.slice(3, -3)  // '3456'
+str.slice(-3, 3)  // ''
 ```
 
 ## Objects
@@ -129,14 +167,17 @@ Object.keys(obj3).forEach(key => console.log(key, obj3[key]));
 ```javascript
 const randint = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 ```
+
 - random float in `[min, max]`
 ```javascript
 const randfloat = (min, max) => Math.random() * (max - min) + min;
 ```
+
 - random string
 ```javascript
 const randString = () => Array.from({ length: 10 }, () => Math.random().toString(36).substring(2)).join('');
 ```
+
 - random pastel color
 ```javascript
 const randColor = () => `#${((Math.random() * 0xFFFFFF + 0xFFFFFF) >> 1).toString(16)}`;
@@ -181,6 +222,27 @@ fetch('http://example.com/movies.json')
     .then(jsonData => console.log(JSON.stringify(jsonData)))
 ```
 
+### Promise chain
+- await on async functions before next execution
+```javascript
+// sleep sort
+const randint = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+const arr = Array.from({ length: 10 }, (v, i) => randint(1, 10) * 100);
+const reducer = (num) => {
+  return new Promise((resolve) => setTimeout(() => {
+    console.log(num);
+    resolve();
+  }, num))
+};
+arr.map((num) => reducer(num)).reduce((chain, func) => chain.then(func), Promise.resolve());
+
+// in one line
+arr.map((num) => new Promise((resolve) => setTimeout(() => {
+    console.log(num);
+    resolve();
+  }, num))).reduce((chain, func) => chain.then(func), Promise.resolve());
+```
+
 ## Async/Await
 - `await` only works in `async` functions
 ```javascript
@@ -201,3 +263,4 @@ async function work() {
     }
 }
 ```
+
