@@ -222,6 +222,17 @@ fetch('http://example.com/movies.json')
     .then(jsonData => console.log(JSON.stringify(jsonData)))
 ```
 
+### Await `setTimeout`
+```javascript
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+(async () => {
+  await timeout(1000);
+})();
+```
+
 ### Promise chain
 - await on async functions before next execution
 ```javascript
@@ -238,9 +249,14 @@ arr.map((num) => reducer(num)).reduce((chain, func) => chain.then(func), Promise
 
 // in one line
 arr.map((num) => new Promise((resolve) => setTimeout(() => {
-    console.log(num);
-    resolve();
-  }, num))).reduce((chain, func) => chain.then(func), Promise.resolve());
+  console.log(num);
+  resolve();
+}, num))).reduce((chain, func) => chain.then(func), Promise.resolve());
+
+arr.map((num) => () => {
+  return fetch(num);  // async function here
+})  // array of promises
+.reduce((chain, func) => chain.then(func), Promise.resolve());  // loop the array, build promise chain: Promise.resolve().then(promise1).then(promise2)...
 ```
 
 ## Async/Await
@@ -264,3 +280,99 @@ async function work() {
 }
 ```
 
+## `this` keyword
+```javascript
+const video = {
+  title: "a",
+  tags: ["a", "b"],
+  // showTags: () => {
+  showTags() {
+    this.tags.forEach(function (tag) {
+      // this.tags.forEach((tag) => {
+      console.log(this, tag);
+    // });
+    }.bind(this));
+  },
+};
+
+video.showTags();
+
+// in object's method directly (not a function of a method): refers to the object
+
+```
+- in function: refers to window (browser) or global (node)
+- in constructor function (called with `new`): refers to the newly created object
+  - `new` creates an empty object and points `this` to it
+- in binded function: refers to parameter passed to `bind`
+- in arrow functions: refers to outer environment
+```
+// Example using a arrow function
+function createObject() {
+  console.log('Inside `createObject`:', this.foo);
+  return {
+    foo: 42,
+    bar: () => console.log('Inside `bar`:', this.foo),
+  };
+}
+
+createObject.call({foo: 21}).bar(); // override `this` inside createObject
+```
+
+## Mutex
+```javascript
+class Mutex {
+  constructor() {
+    this.currentLock = Promise.resolve();
+  }
+
+  lock() {
+    let removeLock;
+    const newLock = new Promise((resolve) => {
+      removeLock = () => resolve();
+    });
+    const unlock = this.currentLock.then(() => removeLock);
+    this.currentLock = newLock;
+    return unlock;
+  }
+}
+
+const mutex = new Mutex();
+const unlock = await mutex.lock();
+// ...
+unlock();
+
+class Semaphore {
+  constructor(max) {
+    this.max = max;
+    this.counter = 0;
+    this.queue = [];
+  }
+
+  acquire() {
+    if (this.counter < this.max) {
+      this.counter++;
+      return Promise.resolve();
+    } else {
+      return new Promise((resolve, reject) => {
+        this.queue.push({ resolve, reject });
+      });
+    }
+  }
+
+  release() {
+    this.counter--;
+    if (this.queue.length > 0 && this.counter < this.max) {
+      this.counter++;
+      this.queue.shift().resolve();
+    }
+  }
+
+  purge() {
+    const unresolved = this.queue.length;
+    this.queue.forEach((unresolved) => unresolved.reject('Task has been purged.'));
+    this.counter = 0;
+    this.queue = [];
+    return unresolved;
+  }
+}
+```
